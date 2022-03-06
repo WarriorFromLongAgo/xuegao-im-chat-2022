@@ -64,6 +64,20 @@
                 <version>1.7.33</version>
             </dependency>
             <!--End LogBack Log-->
+
+            <dependency>
+                <groupId>com.xuegao</groupId>
+                <artifactId>chat-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.12.0</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

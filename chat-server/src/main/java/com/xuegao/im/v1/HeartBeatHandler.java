@@ -1,4 +1,4 @@
-package com.xuegao.im;
+package com.xuegao.im.v1;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

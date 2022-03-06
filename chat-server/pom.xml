@@ -30,5 +30,9 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.xuegao</groupId>
+            <artifactId>chat-common</artifactId>
+        </dependency>
     </dependencies>
 </project>
