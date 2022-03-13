@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class Pinger extends ChannelInboundHandlerAdapter {
 
     private Random random = new Random();
-    private int baseRandom = 8;
+    private int baseRandom = 3;
 
     private Channel channel;
 
