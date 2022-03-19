@@ -52,77 +52,95 @@ public class OneServer {
     }
 }
 
+// channelActive
+// exceptionCaught
+
 class EchoServerHandler extends SimpleChannelInboundHandler<String> {
 
     protected EchoServerHandler() {
         super();
+        System.out.println("EchoServerHandler");
     }
 
     protected EchoServerHandler(boolean autoRelease) {
         super(autoRelease);
+        System.out.println("EchoServerHandler autoRelease");
     }
 
     protected EchoServerHandler(Class<? extends String> inboundMessageType) {
         super(inboundMessageType);
+        System.out.println("EchoServerHandler inboundMessageType");
     }
 
     protected EchoServerHandler(Class<? extends String> inboundMessageType, boolean autoRelease) {
         super(inboundMessageType, autoRelease);
+        System.out.println("EchoServerHandler inboundMessageType autoRelease");
     }
 
     @Override
     public boolean acceptInboundMessage(Object msg) throws Exception {
+        System.out.println("EchoServerHandler acceptInboundMessage");
         return super.acceptInboundMessage(msg);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         super.channelRead(ctx, msg);
+        System.out.println("EchoServerHandler channelRead");
     }
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         super.channelRegistered(ctx);
+        System.out.println("EchoServerHandler channelRegistered");
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         super.channelUnregistered(ctx);
+        System.out.println("EchoServerHandler channelUnregistered");
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
+        System.out.println("EchoServerHandler channelInactive");
     }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         super.channelReadComplete(ctx);
+        System.out.println("EchoServerHandler channelReadComplete");
     }
 
     @Override
     public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
         super.channelWritabilityChanged(ctx);
+        System.out.println("EchoServerHandler channelWritabilityChanged");
     }
 
     @Override
     protected void ensureNotSharable() {
         super.ensureNotSharable();
+        System.out.println("EchoServerHandler ensureNotSharable");
     }
 
     @Override
     public boolean isSharable() {
+        System.out.println("EchoServerHandler isSharable");
         return super.isSharable();
     }
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         super.handlerAdded(ctx);
+        System.out.println("EchoServerHandler handlerAdded");
     }
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         super.handlerRemoved(ctx);
+        System.out.println("EchoServerHandler handlerRemoved");
     }
 
     @Override
@@ -134,7 +152,6 @@ class EchoServerHandler extends SimpleChannelInboundHandler<String> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
         System.out.println("channelRead0" + msg);
-
     }
 
     @Override

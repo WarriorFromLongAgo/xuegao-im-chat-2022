@@ -52,6 +52,36 @@ public class OneServer {
     }
 }
 
+// EchoServerHandler
+// isSharable
+// handlerAdded
+// channelRegistered
+// channelActive
+// 23:47:17.455 [nioEventLoopGroup-2-2] DEBUG io.netty.util.Recycler - -Dio.netty.recycler.maxCapacityPerThread: 4096
+// 23:47:17.455 [nioEventLoopGroup-2-2] DEBUG io.netty.util.Recycler - -Dio.netty.recycler.ratio: 8
+// 23:47:17.455 [nioEventLoopGroup-2-2] DEBUG io.netty.util.Recycler - -Dio.netty.recycler.chunkSize: 32
+// 23:47:17.461 [nioEventLoopGroup-2-2] DEBUG io.netty.buffer.AbstractByteBuf - -Dio.netty.buffer.checkAccessible: true
+// 23:47:17.461 [nioEventLoopGroup-2-2] DEBUG io.netty.buffer.AbstractByteBuf - -Dio.netty.buffer.checkBounds: true
+// 23:47:17.462 [nioEventLoopGroup-2-2] DEBUG io.netty.util.ResourceLeakDetectorFactory - Loaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@160ca810
+// channelRead
+// 23:47:17.465 [nioEventLoopGroup-2-2] DEBUG io.netty.channel.DefaultChannelPipeline - Discarded inbound message PooledUnsafeDirectByteBuf(ridx: 0, widx: 79, cap: 2048) that reached at the tail of the pipeline. Please check your pipeline configuration.
+// 23:47:17.471 [nioEventLoopGroup-2-2] DEBUG io.netty.channel.DefaultChannelPipeline - Discarded message pipeline : [EchoServerHandler#0, DefaultChannelPipeline$TailContext#0]. Channel : [id: 0x694fa93c, L:/127.0.0.1:10000 - R:/127.0.0.1:57481].
+// channelReadComplete
+
+// exceptionCaught
+// channelInactive
+// channelUnregistered
+// handlerRemoved
+
+// channelRead表示接收消息，可以看到msg转换成了ByteBuf，
+// 然后打印，也就是把Client传过来的消息打印了一下，你会发现每次打印完后，
+// channelReadComplete也会调用，如果你试着传一个超长的字符串过来，超过1024个字母长度，
+// 你会发现channelRead会调用多次，而channelReadComplete只调用一次。
+// 所以这就比较清晰了吧，因为ByteBuf是有长度限制的，所以超长了，就会多次读取，也就是调用多次channelRead，
+// 而channelReadComplete则是每条消息只会调用一次，无论你多长，分多少次读取，只在该条消息最后一次读取完成的时候调用，
+// 所以这段代码把关闭Channel的操作放在channelReadComplete里，放到channelRead里可能消息太长了，
+// 结果第一次读完就关掉连接了，后面的消息全丢了。
+
 class EchoServerHandler extends ChannelInboundHandlerAdapter {
     public EchoServerHandler() {
         super();
