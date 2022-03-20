@@ -5,6 +5,7 @@ import com.xuegao.im.im.codec.InvocationEncoder;
 import com.xuegao.im.im.dispatcher.MessageDispatcher;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class NettyClientHandlerInitializer extends ChannelInitializer<Channel> {
     protected void initChannel(Channel ch) {
         ch.pipeline()
                 // 空闲检测
-                // .addLast(new IdleStateHandler(READ_TIMEOUT_SECONDS, 0, 0))
+                .addLast(new IdleStateHandler(READ_TIMEOUT_SECONDS, 0, 0))
                 .addLast(new ReadTimeoutHandler(3 * READ_TIMEOUT_SECONDS))
                 // 编码器
                 .addLast(new InvocationEncoder())

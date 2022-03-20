@@ -1,6 +1,9 @@
 package com.xuegao.im.client.handler;
 
 import com.xuegao.im.client.NettyClient;
+import com.xuegao.im.im.codec.Invocation;
+import com.xuegao.im.msg.heartbeat.HeartbeatRequest;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -39,9 +42,9 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
         // 空闲时，向服务端发起一次心跳
         if (event instanceof IdleStateEvent) {
             logger.info("[userEventTriggered][发起一次心跳]");
-            // HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
-            // ctx.writeAndFlush(new Invocation(HeartbeatRequest.TYPE, heartbeatRequest))
-            //         .addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+            HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
+            ctx.writeAndFlush(new Invocation(HeartbeatRequest.TYPE, heartbeatRequest))
+                    .addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
         } else {
             super.userEventTriggered(ctx, event);
         }
