@@ -1,13 +1,17 @@
 package com.xuegao.im.v3_my;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.CharsetUtil;
+import io.netty.util.concurrent.GenericFutureListener;
 
 import java.net.InetSocketAddress;
 
@@ -33,9 +37,9 @@ public class HeartBeatServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            // echoServerHandler 被标注 @ChannelHandler.Sharable ，所以我们总是可以使用同样的实例
-                            // 这里对于所有的客户端连接来说，都会使用同一个EchoServerHandler，因为其被标注为@Sharable，
-                            // 这将在后面的章节中讲到。——译者注
+                            // v1
+                            ch.pipeline().addLast(new IdleStateHandler(
+                                    5, 0, 0));
                             ch.pipeline().addLast(new EchoServerHandler());
                         }
                     });
@@ -53,6 +57,12 @@ public class HeartBeatServer {
 }
 
 class EchoServerHandler extends SimpleChannelInboundHandler<String> {
+    private int loss_connect_time = 0;
+    private static byte[] HEART_BEAT_MSG = "pong".getBytes();
+
+    private static String SEND_SUCCESS = "发送心跳成功";
+
+    private static String SEND_FAIL = "发生心跳失败";
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -61,20 +71,127 @@ class EchoServerHandler extends SimpleChannelInboundHandler<String> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-        System.out.println("channelRead0" + msg);
-
+    public boolean acceptInboundMessage(Object msg) throws Exception {
+        System.out.println("acceptInboundMessage 1 = " + msg);
+        if (msg instanceof ByteBuf) {
+            ByteBuf byteBuf = (ByteBuf) msg;
+            System.out.println("acceptInboundMessage 2 = " + byteBuf);
+            System.out.println("acceptInboundMessage 3 = " + byteBuf.toString(CharsetUtil.UTF_8));
+        }
+        return super.acceptInboundMessage(msg);
     }
 
     @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        System.out.println("userEventTriggered");
-        super.userEventTriggered(ctx, evt);
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        System.out.println("channelRead 1 = " + msg);
+        if (msg instanceof ByteBuf) {
+            ByteBuf byteBuf = (ByteBuf) msg;
+            System.out.println("channelRead 2 = " + byteBuf);
+            System.out.println("channelRead 3 = " + byteBuf.toString(CharsetUtil.UTF_8));
+        }
+        super.channelRead(ctx, msg);
+    }
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        super.channelRegistered(ctx);
+        System.out.println("channelRegistered");
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        super.channelUnregistered(ctx);
+        System.out.println("channelUnregistered");
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        System.out.println("channelInactive");
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        super.channelReadComplete(ctx);
+        System.out.println("channelReadComplete");
+    }
+
+    @Override
+    public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
+        super.channelWritabilityChanged(ctx);
+        System.out.println("channelWritabilityChanged");
+    }
+
+    @Override
+    protected void ensureNotSharable() {
+        super.ensureNotSharable();
+        System.out.println("ensureNotSharable");
+    }
+
+    @Override
+    public boolean isSharable() {
+        System.out.println("isSharable");
+        return super.isSharable();
+    }
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        super.handlerAdded(ctx);
+        System.out.println("handlerAdded");
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        super.handlerRemoved(ctx);
+        System.out.println("handlerRemoved");
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         System.out.println("exceptionCaught");
         super.exceptionCaught(ctx, cause);
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+        System.out.println("channelRead0 = " + msg);
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        System.out.println("userEventTriggered = " + evt);
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent event = (IdleStateEvent) evt;
+            if (event.state() == IdleState.READER_IDLE) {
+                ByteBuf byteBuf = Unpooled.copiedBuffer(HEART_BEAT_MSG);
+                ctx.channel().writeAndFlush(byteBuf).addListener(new GenericFutureListener<ChannelPromise>() {
+                    @Override
+                    public void operationComplete(ChannelPromise future) throws Exception {
+                        boolean isDone = future.isDone();
+                        if (!isDone) {
+                            System.out.println(SEND_FAIL);
+                        } else {
+                            System.out.println(SEND_SUCCESS);
+                        }
+                    }
+                });
+
+                loss_connect_time++;
+                System.out.println("5 秒没有接收到客户端的信息了");
+                if (loss_connect_time > 2) {
+                    System.out.println("关闭这个不活跃的channel");
+                    ctx.channel().close();
+                }
+            }
+            if (event.state() == IdleState.WRITER_IDLE) {
+
+            }
+            if (event.state() == IdleState.ALL_IDLE) {
+
+            }
+        } else {
+            System.out.println("super.userEventTriggered(ctx, evt);");
+            super.userEventTriggered(ctx, evt);
+        }
     }
 }
