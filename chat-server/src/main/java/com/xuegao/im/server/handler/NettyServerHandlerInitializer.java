@@ -1,8 +1,8 @@
 package com.xuegao.im.server.handler;
 
-import cn.iocoder.springboot.lab67.nettycommondemo.codec.InvocationDecoder;
-import cn.iocoder.springboot.lab67.nettycommondemo.codec.InvocationEncoder;
-import cn.iocoder.springboot.lab67.nettycommondemo.dispatcher.MessageDispatcher;
+import com.xuegao.im.im.codec.InvocationDecoder;
+import com.xuegao.im.im.codec.InvocationEncoder;
+import com.xuegao.im.im.dispatcher.MessageDispatcher;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

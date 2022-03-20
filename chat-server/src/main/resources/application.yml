@@ -1,3 +1,5 @@
 netty:
   # Netty Server 端口
   port: 10000
+server:
+  port: 20000

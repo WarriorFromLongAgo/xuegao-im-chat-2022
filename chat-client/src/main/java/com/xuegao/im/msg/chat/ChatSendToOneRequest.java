@@ -1,6 +1,7 @@
 package com.xuegao.im.msg.chat;
 
 
+import com.xuegao.im.im.dispatcher.Message;
 
 /**
  * 发送给指定人的私聊消息 Request

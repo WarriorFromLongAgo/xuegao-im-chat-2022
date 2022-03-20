@@ -1,6 +1,7 @@
 package com.xuegao.im.msg.chat;
 
 
+import com.xuegao.im.im.dispatcher.Message;
 
 /**
  * 发送给所有人的群聊消息的 Message
