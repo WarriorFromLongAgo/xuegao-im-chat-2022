@@ -1,0 +1,6 @@
+netty:
+  server:
+    # Netty Server 地址
+    host: 127.0.0.1
+    # Netty Server 端口
+    port: 10000
