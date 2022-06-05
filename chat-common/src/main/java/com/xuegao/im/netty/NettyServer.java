@@ -1,6 +1,6 @@
 package com.xuegao.im.netty;
 
-import com.xuegao.im.netty.ws2.WsChannelInitializer2;
+import com.xuegao.im.netty.ws.TextWsFrameHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -9,7 +9,10 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -50,9 +53,14 @@ public class NettyServer {
                     protected void initChannel(SocketChannel socketChannel) {
                         ChannelPipeline pipeline = socketChannel.pipeline();
                         pipeline.addLast(new HttpServerCodec());
-                        // pipeline.addLast(new WsChannelInitializer());
-                        pipeline.addLast(new WsChannelInitializer2());
+                        pipeline.addLast(new ChunkedWriteHandler());
+                        pipeline.addLast(new HttpObjectAggregator(65536));
+                        // 第一种 websocket 方法
+                        pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
+                        pipeline.addLast(new TextWsFrameHandler());
 
+                        // 第二种 websocket 方法
+                        // pipeline.addLast(new WSServerHandler());
                     }
                 })
                 .option(ChannelOption.SO_BACKLOG, 128)
