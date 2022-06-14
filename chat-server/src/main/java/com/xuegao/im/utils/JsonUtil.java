@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 public final class JsonUtil {
     private static final Logger log = LoggerFactory.getLogger(JsonUtil.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonUtil.class);
-
     /**
      * 把Java对象转换成json字符串
      *
@@ -23,8 +21,7 @@ public final class JsonUtil {
         try {
             string = JSON.toJSONString(object);
         } catch (Exception e) {
-            log.info("[xuegao-im-chat-2022][JsonUtil][parseObjToJson][object={}]", JSON.toJSONString(object));
-            LOGGER.error(e.getMessage());
+            log.info("[xuegao-im-chat-2022][JsonUtil][parseObjToJson][object={}]", JSON.toJSONString(object), e);
         }
         return string;
     }
@@ -39,8 +36,7 @@ public final class JsonUtil {
         try {
             return JSON.parseObject(json, c);
         } catch (Exception e) {
-            log.info("[xuegao-im-chat-2022][JsonUtil][parseJsonToObj][json={}]", json);
-            LOGGER.error(e.getMessage());
+            log.info("[xuegao-im-chat-2022][JsonUtil][parseJsonToObj][json={}]", json, e);
         }
         return null;
     }
