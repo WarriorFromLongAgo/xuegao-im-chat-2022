@@ -1,27 +1,5 @@
 # xuegao-im-chat-2022
 
-测试版本
-# 人的基本信息
-1，自增长的long id，登录页面要请求这个接口，展示在页面上
-2，登录or注册接口，将注册信息传递到后台，后台返回id给前端
-3，缓存map
-    key = 人id
-    value = 人的相关信息
-    例如：账号username，昵称，头像，等等
-4，通过username查询人id的方法
-5，缓存map
-    key = username
-    value = 人id
-
-# 好友关系
-1，好友map
-    key = 人id
-    value = set(人id)
-2，好友map，相关信息
-    key 人id
-    value = map<人id，相关信息>
-    相关信息 = 备注，免打扰，
-
 # 每个人发送的消息表
 用来描述一个用户的所有收到群消息（与单对单消息表是同一个表）
 
