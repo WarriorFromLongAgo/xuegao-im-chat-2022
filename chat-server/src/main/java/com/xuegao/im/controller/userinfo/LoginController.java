@@ -1,4 +1,4 @@
-package com.xuegao.im.controller;
+package com.xuegao.im.controller.userinfo;
 
 import com.xuegao.im.utils.RespUtil;
 import org.springframework.web.bind.annotation.GetMapping;
